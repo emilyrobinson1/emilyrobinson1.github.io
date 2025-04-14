@@ -4,27 +4,27 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this blog"
+    "text": "Studying a double major of Sports Media and Communications and Advertising and Public Relations with a double minor in Women and Gender Studies and Communication, Emily Robinson hopes to move to Boston, MA. after graduation in May 2026. Emily holds an internship with HuskerVision and works at the Campus Recreation Center as a Strength Supervisor."
   },
   {
     "objectID": "about.html#emily-robinson-is-a-junior-at-the-university-of-nebraska-lincoln.",
     "href": "about.html#emily-robinson-is-a-junior-at-the-university-of-nebraska-lincoln.",
     "title": "About",
     "section": "",
-    "text": "About this blog"
+    "text": "Studying a double major of Sports Media and Communications and Advertising and Public Relations with a double minor in Women and Gender Studies and Communication, Emily Robinson hopes to move to Boston, MA. after graduation in May 2026. Emily holds an internship with HuskerVision and works at the Campus Recreation Center as a Strength Supervisor."
   },
   {
-    "objectID": "posts/caitlin-clark's-influence-on-indiana-fever/index.html",
-    "href": "posts/caitlin-clark's-influence-on-indiana-fever/index.html",
-    "title": "Caitlin Clark’s Influence on Indiana Fever",
+    "objectID": "posts/caitlin-clarks-influence-on-indiana-fever/index.html",
+    "href": "posts/caitlin-clarks-influence-on-indiana-fever/index.html",
+    "title": "Did Caitlin Clark’s Rookie Season Transform the Indiana Fever?",
     "section": "",
-    "text": "Caitlin Clark has brought up attendance records for Indiana by 182%.\n\n\nCode\n1 + 1\n\n\n[1] 2"
+    "text": "Despite finishing 14-26, Clark set the WNBA single-season assist record, averaged 19.2 points per game, and drove a 182% surge in ticket sales, proving her impact beyond wins and losses.\n\n\nCode\nlibrary(tidyverse)\nlibrary(wehoop)\nlibrary(RColorBrewer)\n\nplayers &lt;- read_csv(\"wnba_players_stats.csv\")\n\nrookies_2024 &lt;- players %&gt;%\n  select(Player, PTS, AST, REB)\n\nclark_stats &lt;- rookies_2024 %&gt;%\n  filter(Player == \"Caitlin Clark\")\n\nrookies_2024_long &lt;- rookies_2024 %&gt;%\n  gather(key = \"Stat\", value = \"Value\", PTS, AST, REB)\n\ntop_15_rookies &lt;- rookies_2024 %&gt;%\n  group_by(Player) %&gt;%\n  summarise(Total_PTS = sum(PTS, na.rm = TRUE)) %&gt;%\n  top_n(10, Total_PTS) %&gt;%\n  select(Player)\n\nrookies_top_15 &lt;- rookies_2024 %&gt;%\n  filter(Player %in% top_15_rookies$Player)\n\nrookies_top_15_long &lt;- rookies_top_15 %&gt;%\n  gather(key = \"Stat\", value = \"Value\", PTS, AST, REB)\n\nrookies_top_15_long &lt;- rookies_top_15_long %&gt;%\n  mutate(Player_Color = ifelse(Player == \"Caitlin Clark\", \"Caitlin Clark\", \"Other Players\"))\n\nteam_colors &lt;- c(\"Caitlin Clark\" = \"gold\", \"Other Players\" = \"#A9A9A9\")\n\nggplot(rookies_top_15_long, aes(x = Player, y = Value, fill = Player_Color)) +\n  geom_bar(stat = \"identity\", position = \"dodge\", width = 0.7) +\n  theme_minimal(base_size = 14) +  \n  labs(\n    title = \"Caitlin Clark Dominates the Top 10\",  \n    subtitle = \"Rookie Clark compares to veteran WNBA players\",  \n    y = \"Average Points Per Game\",  \n    x = \"Top WNBA Players 2024\"  \n  ) +\n  scale_fill_manual(values = team_colors) +  # Apply custom colors\n  theme(\n    axis.text.x = element_text(angle = 45, hjust = 1, size = 12, color = \"black\"),  \n    axis.title.x = element_text(size = 14, color = \"black\"),  \n    axis.title.y = element_text(size = 14, color = \"black\"),  \n    plot.title = element_text(size = 18, face = \"bold\", color = \"black\"),  \n    plot.subtitle = element_text(size = 14, color = \"black\"),  \n    panel.grid.major = element_line(color = \"grey80\", linetype = \"dashed\"),  \n    panel.grid.minor = element_blank(), \n    plot.background = element_rect(fill = \"white\", color = NA)  \n  ) +\n  guides(fill = FALSE) \n\n\n\n\n\n\n\n\n\n\n\nCode\n# Load data\nIndianaFever &lt;- read_csv(\"team_score.csv\")\n\n# Select and prepare necessary columns\nIndianaFever &lt;- IndianaFever %&gt;%\n  select(game_date, Score, `W/L`) %&gt;%\n  mutate(`W/L` = factor(`W/L`, levels = c(\"W\", \"L\")))  # Ensure proper factor order\n\n# Create the plot\nggplot(IndianaFever, aes(x = game_date, y = Score)) +\n  geom_line(color = \"gray40\", size = 1) +  # Line showing score progression over time\n  geom_point(aes(color = `W/L`), size = 3) +  # Points colored by win/loss\n  scale_color_manual(values = c(\"W\" = \"green\", \"L\" = \"red\")) +\n  labs(\n    title = \"Indiana Fever Game Scores by Date\",\n    x = \"Game Date\",\n    y = \"Team Score\",\n    color = \"Game Result\"\n  ) +\n  theme_minimal(base_size = 14) +\n  theme(\n    axis.text.x = element_text(angle = 45, hjust = 1),\n    plot.title = element_text(size = 18, face = \"bold\")\n  )\n\n\n\n\n\n\n\n\n\n\n\nCode\nIndianaFever &lt;- read_csv(\"team_score.csv\") %&gt;%\n  select(Score, points, `W/L`) %&gt;%\n  mutate(\n    Rest_of_Team = Score - points,  \n    win = if_else(`W/L` == \"W\", \"Win\", \"Loss\")  \n  )\n\n\nNew names:\nRows: 40 Columns: 6\n── Column specification\n──────────────────────────────────────────────────────── Delimiter: \",\" chr\n(3): W/L, Opponent, game_date dbl (2): Score, points lgl (1): ...1\nℹ Use `spec()` to retrieve the full column specification for this data. ℹ\nSpecify the column types or set `show_col_types = FALSE` to quiet this message.\n• `` -&gt; `...1`\n\n\nCode\nIndianaFever &lt;- IndianaFever %&gt;%\n  filter(!is.na(points), !is.na(win), !is.na(Score))\n\nggplot(IndianaFever, aes(x = Score, y = points, size = win, color = win)) +\n  geom_point(alpha = 0.7) +\n  scale_size_manual(values = c(\"Loss\" = 4, \"Win\" = 10)) +\n  scale_color_manual(values = c(\"Win\" = \"green\", \"Loss\" = \"red\")) +\n  labs(\n    title = \"Caitlin Controls The Fever's Numbers\",\n    x = \"Indiana Fever's Final Score\",\n    y = \"Caitlin Clark's Points\",\n    size = \"Game Result\",\n    color = \"Game Result\"\n  ) +\n  theme_minimal(base_size = 14) +\n  theme(\n    plot.title = element_text(size = 18, face = \"bold\")\n  )"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "EmilysSportsBlog",
+    "title": "Latest posts",
     "section": "",
-    "text": "Caitlin Clark’s Influence on Indiana Fever\n\n\n\n\n\n\nwnba\n\n\nbasketball\n\n\nindiana\n\n\n\n\n\n\n\n\n\nApr 1, 2025\n\n\nEmily Robinson\n\n\n\n\n\n\nNo matching items"
+    "text": "Did Caitlin Clark’s Rookie Season Transform the Indiana Fever?\n\n\n\n\n\n\nwnba\n\n\nbasketball\n\n\nindiana\n\n\n\n\n\n\n\n\n\nApr 1, 2025\n\n\nEmily Robinson\n\n\n\n\n\n\nNo matching items"
   }
 ]
