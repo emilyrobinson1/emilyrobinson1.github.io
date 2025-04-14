@@ -1,0 +1,148 @@
+---
+title: "Caitlin Clark's Influence on Indiana Fever"
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: false
+  filter-ui: false
+page-layout: full
+title-block-banner: true
+---
+
+
+```{r}
+library(tidyverse)
+library(wehoop)
+library(RColorBrewer)
+
+players <- read_csv("wnba_players_stats.csv")
+
+rookies_2024 <- players %>%
+  select(Player, PTS, AST, REB)
+
+clark_stats <- rookies_2024 %>%
+  filter(Player == "Caitlin Clark")
+
+rookies_2024_long <- rookies_2024 %>%
+  gather(key = "Stat", value = "Value", PTS, AST, REB)
+
+clark_stats
+
+top_15_rookies <- rookies_2024 %>%
+  group_by(Player) %>%
+  summarise(Total_PTS = sum(PTS, na.rm = TRUE)) %>%
+  top_n(10, Total_PTS) %>%
+  select(Player)
+
+rookies_top_15 <- rookies_2024 %>%
+  filter(Player %in% top_15_rookies$Player)
+
+rookies_top_15_long <- rookies_top_15 %>%
+  gather(key = "Stat", value = "Value", PTS, AST, REB)
+
+rookies_top_15_long <- rookies_top_15_long %>%
+  mutate(Player_Color = ifelse(Player == "Caitlin Clark", "Caitlin Clark", "Other Players"))
+
+team_colors <- c("Caitlin Clark" = "gold", "Other Players" = "#A9A9A9")
+
+ggplot(rookies_top_15_long, aes(x = Player, y = Value, fill = Player_Color)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  theme_minimal(base_size = 14) +  
+  labs(
+    title = "Caitlin Clark Dominates the Top 10",  
+    subtitle = "Rookie Clark compares to veteran WNBA players",  
+    y = "Average Points Per Game",  
+    x = "Top WNBA Players 2024"  
+  ) +
+  scale_fill_manual(values = team_colors) +  # Apply custom colors
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 12, color = "black"),  
+    axis.title.x = element_text(size = 14, color = "black"),  
+    axis.title.y = element_text(size = 14, color = "black"),  
+    plot.title = element_text(size = 18, face = "bold", color = "black"),  
+    plot.subtitle = element_text(size = 14, color = "black"),  
+    panel.grid.major = element_line(color = "grey80", linetype = "dashed"),  
+    panel.grid.minor = element_blank(), 
+    plot.background = element_rect(fill = "white", color = NA)  
+  ) +
+  guides(fill = FALSE) 
+
+
+```
+```{r}
+
+library(tidyverse)
+library(RColorBrewer)
+
+# Load data
+IndianaFever <- read_csv("team_score.csv")
+
+# Select and prepare necessary columns
+IndianaFever <- IndianaFever %>%
+  select(game_date, Score, `W/L`) %>%
+  mutate(`W/L` = factor(`W/L`, levels = c("W", "L")))  # Ensure proper factor order
+
+# Create the plot
+ggplot(IndianaFever, aes(x = game_date, y = Score)) +
+  geom_line(color = "gray40", size = 1) +  # Line showing score progression over time
+  geom_point(aes(color = `W/L`), size = 3) +  # Points colored by win/loss
+  scale_color_manual(values = c("W" = "green", "L" = "red")) +
+  labs(
+    title = "Indiana Fever Game Scores by Date",
+    x = "Game Date",
+    y = "Team Score",
+    color = "Game Result"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(size = 18, face = "bold")
+  )
+
+
+```
+
+```{r}
+library(tidyverse)
+
+IndianaFever <- read_csv("team_score.csv") %>%
+  select(Score, points, `W/L`) %>%
+  mutate(
+    Rest_of_Team = Score - points,  
+    win = if_else(`W/L` == "W", "Win", "Loss")  
+  )
+
+str(IndianaFever)
+
+IndianaFever <- IndianaFever %>%
+  filter(!is.na(points), !is.na(win), !is.na(Score))
+
+ggplot(IndianaFever, aes(x = Score, y = points, size = win, color = win)) +
+  geom_point(alpha = 0.7) +
+  scale_size_manual(values = c("Loss" = 4, "Win" = 10)) +
+  scale_color_manual(values = c("Win" = "green", "Loss" = "red")) +
+  labs(
+    title = "Caitlin Controls The Fever's Numbers",
+    x = "Indiana Fever's Final Score",
+    y = "Caitlin Clark's Points",
+    size = "Game Result",
+    color = "Game Result"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(size = 18, face = "bold")
+  )
+
+```
+```{r}
+1 + 1
+```
+```{r}
+2 + 2
+```
+```{r}
+#| include: false
+ggsave("image.png")
+```
